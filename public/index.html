@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Protótipo de Votação - TCC</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body class="page theme--dark">
+    <header class="header">
+      <h1 class="header__title">Protótipo de Votação em Blockchain</h1>
+      <p class="header__subtitle">Demonstração educativa — transparência e imutabilidade</p>
+      <div class="header__actions">
+        <button id="themeToggle" class="header__button">Dark / Light</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="section section--register">
+        <div> <!-- essa div existe somente para juntar o title com text -->
+          <h2 class="section__title">Cadastrar Eleitor</h2>
+          <p class="section__text">Clique para gerar um ID de eleitor. Esse ID será usado para votar.</p>
+        </div> <!-- essa div existe somente para juntar o title com text -->
+
+        <button id="registerBtn" class="section__button">Gerar ID de Eleitor</button>
+        <div id="voterId" class="section__output"></div>
+      </section>
+
+
+      <section class="section section--vote">
+        <div> <!-- essa div existe somente para juntar o title com text -->
+          <h2 class="section__title">Votar</h2>
+          <p class="section__text">Insira seu ID de eleitor e escolha uma opção.</p>
+        </div> <!-- essa div existe somente para juntar o title com text -->
+
+        <label class="form__label">
+          Eleitor ID
+          <input id="inputVoterId" class="form__input" placeholder="Cole aqui seu eleitor ID" />
+        </label>
+
+        <label class="form__label">
+          Escolha de voto
+          <select id="selectVote" class="form__input">
+            <option value="Candidate A">Candidato A</option>
+            <option value="Candidate B">Candidato B</option>
+            <option selected value="Blank">Voto em Branco</option>
+          </select>
+        </label>
+
+        <button id="voteBtn" class="section__button">Enviar Voto</button>
+        <div id="voteResult" class="section__output"></div>
+      </section>
+
+      <section class="section section--chain">
+        <div><!-- essa div existe somente para juntar o title com text -->
+          <h2 class="section__title">Visualizar Cadeia (JSON)</h2>
+          <p class="section__text">Transparência completa: veja todos os blocos registrados.</p>
+        </div> <!-- essa div existe somente para juntar o title com text -->
+        <pre id="chainOutput" class="section__pre"></pre>
+        <button id="refreshChain" class="section__button">Atualizar Cadeia</button>
+      </section>
+      
+      <section class="section section--results">
+        <div> <!-- essa div existe somente para juntar o title com text -->
+          <h2 class="section__title">Resultados</h2>
+          <p class="section__text">Apuração automática dos votos registrados na blockchain.</p>
+        </div> <!-- essa div existe somente para juntar o title com text -->
+        <button id="refreshResults" class="section__button">Atualizar Resultados</button>
+        <div id="resultsOutput" class="section__output"></div>
+      </section>
+
+    </main>
+    
+    <footer class="footer">
+      <p class="footer__text">Inspirado em Anders Brownworth. Desenvolvido para fins educacionais.</p>
+    </footer>
+
+
+
+
+    <script src="app.js"></script>
+  </body>
+</html>
