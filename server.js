@@ -1,26 +1,56 @@
 // server.js
 // Simple educational blockchain voting prototype
-// - Express server
-// - In-memory blockchain and voters
-// - Endpoints: POST /cadastrar_eleitor, POST /votar, GET /chain, GET /resultados
+// Now with JSON persistence (chain + voters stored locally)
 
+// ===============================
+// 📦 Imports
+// ===============================
 const express = require('express');
+const fs = require("fs");
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 
-
+// ===============================
+// ⚙️ Basic server setup
+// ===============================
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// ===== Simple blockchain implementation (educational) =====
+// ===============================
+// 💾 JSON Storage Utilities
+// ===============================
+// File path for local blockchain data
+const DATA_FILE = "blockchain_data.json";
+
+// Load data from JSON (if exists)
+function loadData() {
+  try {
+    const data = fs.readFileSync(DATA_FILE, "utf8");
+    const parsed = JSON.parse(data);
+    console.log("✅ Dados carregados do arquivo JSON.");
+    return parsed;
+  } catch (err) {
+    console.log("⚠️ Nenhum arquivo existente encontrado. Iniciando nova blockchain.");
+    return null;
+  }
+}
+
+// Save blockchain + voters to JSON
+function saveData(data) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  console.log("💾 Dados salvos em blockchain_data.json");
+}
+
+// ===============================
+// ⛓️ Blockchain Implementation
+// ===============================
 class Block {
-    constructor(index, timestamp, transactions, previousHash = '', nonce = 0) {
+  constructor(index, timestamp, transactions, previousHash = '', nonce = 0) {
     this.index = index;
     this.timestamp = timestamp;
     this.transactions = transactions; // array of tx objects
@@ -29,15 +59,14 @@ class Block {
     this.hash = this.calculateHash();
   }
 
-
+  // Hashing the block data
   calculateHash() {
     const data = this.index + this.timestamp + JSON.stringify(this.transactions) + this.previousHash + this.nonce;
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 
-
+  // Simple Proof of Work (for demo)
   mineBlock(difficulty) {
-    // very small PoW for demo (do not use in production)
     while (!this.hash.startsWith('0'.repeat(difficulty))) {
       this.nonce++;
       this.hash = this.calculateHash();
@@ -57,11 +86,9 @@ class Blockchain {
     return new Block(0, new Date().toISOString(), [{ type: 'genesis' }], '0');
   }
 
-
   getLatestBlock() {
     return this.chain[this.chain.length - 1];
   }
-
 
   addBlock(transactions) {
     const index = this.chain.length;
@@ -73,17 +100,16 @@ class Blockchain {
     return block;
   }
 
+  // --- Voter registration and voting logic ---
   isVoterRegistered(voterId) {
     return !!this.voters[voterId];
   }
-
 
   registerVoter() {
     const id = uuidv4();
     this.voters[id] = { registeredAt: new Date().toISOString(), voted: false };
     return id;
   }
-
 
   castVote(voterId, voteChoice) {
     if (!this.isVoterRegistered(voterId)) {
@@ -93,8 +119,7 @@ class Blockchain {
       throw new Error('Voter already voted');
     }
     const tx = { type: 'vote', voterId, vote: voteChoice, timestamp: new Date().toISOString() };
-    // For simplicity, each vote creates a new block immediately
-    const block = this.addBlock([tx]);
+    const block = this.addBlock([tx]); // each vote creates a block
     this.voters[voterId].voted = true;
     return block;
   }
@@ -102,7 +127,6 @@ class Blockchain {
   getChain() {
     return this.chain;
   }
-
 
   getResults() {
     const counts = {};
@@ -117,13 +141,23 @@ class Blockchain {
   }
 }
 
-// instantiate blockchain
+// ===============================
+// 🚀 Blockchain Initialization
+// ===============================
+const savedData = loadData();
 const votingChain = new Blockchain();
 
+// Restore data if available
+if (savedData) {
+  votingChain.chain = savedData.chain || [votingChain.createGenesisBlock()];
+  votingChain.voters = savedData.voters || {};
+}
 
-// ===== API routes =====
+// ===============================
+// 🌐 API Routes
+// ===============================
 
-// Health / root serves index.html from /public
+// Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
@@ -132,20 +166,22 @@ app.get('/health', (req, res) => {
 app.post('/cadastrar_eleitor', (req, res) => {
   try {
     const id = votingChain.registerVoter();
+    saveData({ chain: votingChain.chain, voters: votingChain.voters }); // 🔸 persist
     return res.json({ voterId: id });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 });
 
-
 // POST /votar -> payload { eleitor_id, voto }
 app.post('/votar', (req, res) => {
   try {
     const { eleitor_id, voto } = req.body;
     if (!eleitor_id || !voto) return res.status(400).json({ error: 'Missing fields' });
+
     try {
       const block = votingChain.castVote(eleitor_id, voto);
+      saveData({ chain: votingChain.chain, voters: votingChain.voters }); // 🔸 persist
       return res.json({ success: true, block });
     } catch (err) {
       return res.status(400).json({ error: err.message });
@@ -160,14 +196,14 @@ app.get('/chain', (req, res) => {
   res.json({ chain: votingChain.getChain() });
 });
 
-
 // GET /resultados -> returns aggregated vote counts
 app.get('/resultados', (req, res) => {
   res.json({ results: votingChain.getResults() });
 });
 
-
-// start server
+// ===============================
+// 🟢 Start server
+// ===============================
 app.listen(PORT, () => {
-  console.log(`Voting prototype server running on http://localhost:${PORT}`);
+  console.log(`✅ Voting prototype server running on http://localhost:${PORT}`);
 });

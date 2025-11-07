@@ -1,7 +1,8 @@
+// app.js
 // app.js - frontend interactions (English code, Portuguese UI)
 // communicates with backend endpoints described in README
 
-const apiBase = '';// same origin
+const apiBase = ''; // same origin
 
 // elements
 const registerBtn = document.getElementById('registerBtn');
@@ -87,8 +88,9 @@ const toggleBtn = document.getElementById('themeToggle');
 const body = document.body;
 
 toggleBtn.addEventListener('click', () => {
-  body.classList.toggle('theme--dark');
-  body.classList.toggle('theme--light');
+  const isDark = !body.classList.contains('theme--dark');
+  setTheme(isDark);
+  localStorage.setItem('theme-dark', isDark ? '1' : '0');
 });
 
 // init
@@ -96,3 +98,13 @@ toggleBtn.addEventListener('click', () => {
   const saved = localStorage.getItem('theme-dark');
   setTheme(saved === '1');
 })();
+
+function setTheme(isDark) {
+  if (isDark) {
+    body.classList.add('theme--dark');
+    body.classList.remove('theme--light');
+  } else {
+    body.classList.add('theme--light');
+    body.classList.remove('theme--dark');
+  }
+}

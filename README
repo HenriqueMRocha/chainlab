@@ -1,0 +1,94 @@
+📘 2️⃣ Documentação de Uso (para o README.md)
+# 🗳️ Protótipo de Votação em Blockchain — TCC de Henrique Rocha
+
+Este projeto é um **protótipo educacional** que demonstra como o conceito de **blockchain** pode ser aplicado para garantir **transparência e integridade** em processos de votação eletrônica.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+- Node.js  
+- Express  
+- HTML, CSS, JavaScript puro  
+- Criptografia SHA-256 (nativa do Node.js)
+- UUID para geração de identificadores únicos
+
+---
+
+## 🧩 Estrutura do Projeto
+
+
+/project-root
+│
+├── /public
+│ ├── index.html # Interface principal
+│ ├── app.js # Lógica de interação com a API
+│ └── /css/style.css # Estilos e temas (BEM + dark/light)
+│
+└── server.js # Servidor Node + Blockchain
+
+
+---
+
+## ⚙️ Instalação
+
+1. **Instale o Node.js e npm**  
+   ```bash
+   sudo apt install nodejs npm
+
+
+Instale as dependências do projeto
+
+npm install express cors uuid
+
+
+Execute o servidor
+
+node server.js
+
+
+Acesse no navegador:
+
+http://localhost:3000
+
+🧠 Funcionalidades
+Ação	Descrição
+Cadastrar Eleitor	Gera um ID único (UUID) para o eleitor.
+Votar	O eleitor envia seu ID e escolhe um candidato. O sistema cria um novo bloco na blockchain.
+Visualizar Cadeia (JSON)	Mostra toda a blockchain no formato JSON para fins de auditoria.
+Ver Resultados	Mostra a contagem de votos registrada nos blocos.
+Dark / Light Mode	Alterna entre tema claro e escuro.
+🔗 Endpoints da API
+Método	Endpoint	Descrição
+POST /cadastrar_eleitor	Gera um novo eleitor com ID único.	
+POST /votar	Registra o voto do eleitor (se ainda não tiver votado).	
+GET /chain	Retorna toda a cadeia de blocos.	
+GET /resultados	Retorna a contagem total de votos.	
+🧪 Exemplo de Uso (via Terminal ou Postman)
+1️⃣ Cadastrar Eleitor
+curl -X POST http://localhost:3000/cadastrar_eleitor
+
+
+Retorno:
+
+{ "voterId": "b1e19c4e-2b22-4a4c-9a3d-ff9a07c3d5c1" }
+
+2️⃣ Enviar Voto
+curl -X POST http://localhost:3000/votar -H "Content-Type: application/json" \
+-d '{"eleitor_id":"b1e19c4e-2b22-4a4c-9a3d-ff9a07c3d5c1", "voto":"Candidato A"}'
+
+⚠️ Limitações
+
+O sistema é didático, não voltado a uso real.
+
+Os dados são mantidos em memória (ou JSON local).
+
+Não há anonimato criptográfico nem validação em rede.
+
+Cada voto cria um novo bloco (não há batch de transações).
+
+👨‍💻 Autor
+
+Henrique Rocha
+Universidade da Cidade de São Paulo (UNICID)
+Trabalho de Conclusão de Curso – Ciência da Computação
+Tema: Blockchain além das criptomoedas — Aplicações e Impactos em Diversos Setores.
