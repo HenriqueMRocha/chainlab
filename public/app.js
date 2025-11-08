@@ -58,30 +58,93 @@ voteBtn.addEventListener('click', async () => {
   }
 });
 
-// refresh chain
+// refresh chain (open modal with blockchain cards)
 refreshChain.addEventListener('click', async () => {
-  chainOutput.textContent = 'Carregando...';
+  const modal = document.getElementById('chainModal');
+  const modalBody = document.getElementById('modalBody');
+  const overlay = document.getElementById('modalOverlay');
+  const closeBtn = document.getElementById('modalClose');
+
+  modalBody.innerHTML = '<p>Carregando cadeia...</p>';
+  modal.classList.add('modal--active');
+
   try {
     const res = await fetch('/chain');
     const json = await res.json();
-    chainOutput.textContent = JSON.stringify(json.chain, null, 2);
+    const chain = json.chain;
+
+    modalBody.innerHTML = '';
+
+    chain.forEach(block => {
+      const div = document.createElement('div');
+      div.className = 'block-card';
+      div.innerHTML = `
+        <h3 class="block-card__title">Bloco #${block.index}</h3>
+        <p class="block-card__text"><strong>Hash:</strong> ${block.hash.slice(0, 20)}...</p>
+        <p class="block-card__text"><strong>Timestamp:</strong> ${block.timestamp}</p>
+        <p class="block-card__text"><strong>Transações:</strong></p>
+        <pre class="block-card__text">${JSON.stringify(block.transactions, null, 2)}</pre>
+      `;
+      modalBody.appendChild(div);
+    });
   } catch (err) {
-    chainOutput.textContent = 'Erro ao carregar a cadeia';
+    modalBody.innerHTML = '<p>Erro ao carregar a cadeia.</p>';
   }
+
+  // close behavior
+  overlay.onclick = closeBtn.onclick = () => {
+    modal.classList.remove('modal--active');
+  };
 });
 
 
 // refresh results
 refreshResults.addEventListener('click', async () => {
-  resultsOutput.textContent = 'Carregando...';
+  resultsOutput.innerHTML = '<p>Carregando resultados...</p>';
+  resultsOutput.style.display = 'block';
   try {
     const res = await fetch('/resultados');
     const json = await res.json();
-    resultsOutput.textContent = JSON.stringify(json.results, null, 2);
+    const results = json.results;
+
+    // caso não haja votos
+    if (!results || Object.keys(results).length === 0) {
+      resultsOutput.innerHTML = `
+        <div class="results__empty">
+          <p>Nenhum voto registrado até o momento.</p>
+        </div>
+      `;
+      return;
+    }
+
+    // construir HTML estilizado dos resultados
+    let html = `
+      <div class="results__card">
+        <h3 class="results__title">Resultados da Votação</h3>
+        <ul class="results__list">
+    `;
+
+    for (const [candidate, votes] of Object.entries(results)) {
+      html += `
+        <li class="results__item">
+          <span class="results__name">${candidate}</span>
+          <span class="results__votes">${votes} voto(s)</span>
+        </li>
+      `;
+    }
+
+    html += `
+        </ul>
+      </div>
+    `;
+
+    resultsOutput.innerHTML = html;
+    resultsOutput.style.display = 'block';
   } catch (err) {
     resultsOutput.textContent = 'Erro ao carregar resultados';
   }
 });
+
 
 // theme toggle
 const toggleBtn = document.getElementById('themeToggle');

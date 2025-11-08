@@ -1,0 +1,83 @@
+{
+  "chain": [
+    {
+      "index": 0,
+      "timestamp": "2025-11-07T23:08:59.960Z",
+      "transactions": [
+        {
+          "type": "genesis"
+        }
+      ],
+      "previousHash": "0",
+      "nonce": 0,
+      "hash": "595f3ceb5d3852ffba2c64ac7934b104a531b99b27f6a44ecf68635d433f8a47"
+    },
+    {
+      "index": 1,
+      "timestamp": "2025-11-07T23:23:52.486Z",
+      "transactions": [
+        {
+          "type": "vote",
+          "voterId": "db9fc236-e8dd-4131-8a9a-1cca5073009f",
+          "vote": "Candidate A",
+          "timestamp": "2025-11-07T23:23:52.486Z"
+        }
+      ],
+      "previousHash": "595f3ceb5d3852ffba2c64ac7934b104a531b99b27f6a44ecf68635d433f8a47",
+      "nonce": 92,
+      "hash": "00b5f119cd3f3c92297e5d5bda56b7b0188929b22e112ba239799d913828a045"
+    },
+    {
+      "index": 2,
+      "timestamp": "2025-11-07T23:35:17.002Z",
+      "transactions": [
+        {
+          "type": "vote",
+          "voterId": "b9042343-2ab7-4867-af74-e6cea1399279",
+          "vote": "Candidate B",
+          "timestamp": "2025-11-07T23:35:17.002Z"
+        }
+      ],
+      "previousHash": "00b5f119cd3f3c92297e5d5bda56b7b0188929b22e112ba239799d913828a045",
+      "nonce": 334,
+      "hash": "007e3377737d7b18e97188dc51d8bccbd7f0050058db118d88866de024db99bc"
+    },
+    {
+      "index": 3,
+      "timestamp": "2025-11-07T23:40:29.219Z",
+      "transactions": [
+        {
+          "type": "vote",
+          "voterId": "78bcef98-fd04-4a9a-b5f4-48eec45b1174",
+          "vote": "Candidate B",
+          "timestamp": "2025-11-07T23:40:29.219Z"
+        }
+      ],
+      "previousHash": "007e3377737d7b18e97188dc51d8bccbd7f0050058db118d88866de024db99bc",
+      "nonce": 215,
+      "hash": "008abdff31d5df1b5aac1eefce258bff878ccd8c7e3d8593327d6ebedc92bf9a"
+    }
+  ],
+  "voters": {
+    "60b15078-43f6-4f4c-91df-5a2f1d591cc7": {
+      "registeredAt": "2025-11-07T23:23:38.089Z",
+      "voted": false
+    },
+    "4898e8f1-d7c2-4ec4-bda7-47e6878d7bde": {
+      "registeredAt": "2025-11-07T23:23:41.615Z",
+      "voted": false
+    },
+    "db9fc236-e8dd-4131-8a9a-1cca5073009f": {
+      "registeredAt": "2025-11-07T23:23:42.677Z",
+      "voted": true
+    },
+    "b9042343-2ab7-4867-af74-e6cea1399279": {
+      "registeredAt": "2025-11-07T23:35:14.226Z",
+      "voted": true
+    },
+    "78bcef98-fd04-4a9a-b5f4-48eec45b1174": {
+      "registeredAt": "2025-11-07T23:40:26.211Z",
+      "voted": true
+    }
+  }
+}
